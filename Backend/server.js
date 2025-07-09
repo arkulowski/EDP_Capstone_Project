@@ -24,3 +24,13 @@ MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
   .catch((err) => {
     console.error('Error connecting to MongoDB:', err);
   });
+
+  // Route: /
+app.get('/', async (req, res) => {
+    try {
+        res.status(200).send('Server is running');
+      } catch (err) {
+        console.error('Error in / route:', err);
+        res.status(500).send('Server error');
+      }
+});

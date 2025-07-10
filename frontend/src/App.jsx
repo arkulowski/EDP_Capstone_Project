@@ -12,9 +12,9 @@ export default function App() {
       </header>
       <main style={{ padding: '1rem' }}>
         <Routes>
-          <Route path="/"               element={<HomePage />} />
-          <Route path="/employees/:id"  element={<EmployeePage />} />
-          <Route path="/predict"        element={<PredictPage />} />
+          <Route path="/"              element={<HomePage />} />
+          <Route path="/employees/:id" element={<EmployeePage />} />
+          <Route path="/predict"       element={<PredictPage />} />
         </Routes>
       </main>
     </BrowserRouter>

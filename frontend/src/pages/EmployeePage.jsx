@@ -1,4 +1,4 @@
-// frontend/src/pages/EmployeePage.jsx
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchEmployee, fetchSalary } from '../api';

@@ -35,6 +35,12 @@ app.get('/', async (req, res) => {
       }
 });
 
+//test endpoint
+app.get('/api/ping', (req, res) => {
+  res.json({ message: 'ping from the server'})
+
+})
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

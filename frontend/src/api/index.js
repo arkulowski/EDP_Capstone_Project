@@ -1,32 +1,28 @@
-// frontend/src/api/index.js
-const BASE = import.meta.env.VITE_API_BASE_URL || '';
+const BASE = import.meta.env.VITE_API_BASE_URL;
 
 async function getJSON(path) {
   const res = await fetch(`${BASE}${path}`, {
     headers: { Accept: 'application/json' },
     credentials: 'include',
   });
-  if (!res.ok) throw new Error(`Fetch error: ${res.status}`);
+  if (!res.ok) throw new Error(res.statusText);
   return res.json();
 }
 
 async function postJSON(path, body) {
   const res = await fetch(`${BASE}${path}`, {
-    method: 'POST',
-    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     credentials: 'include',
     body: JSON.stringify(body),
   });
-  if (!res.ok) throw new Error(`Fetch error: ${res.status}`);
+  if (!res.ok) throw new Error(res.statusText);
   return res.json();
 }
 
-export function pingServer() {
-  return getJSON('/ping');
-}
-
 export function fetchEmployees(q = '') {
-  return getJSON(`/employees?q=${encodeURIComponent(q)}`);
+  const qs = q ? `?q=${encodeURIComponent(q)}` : '';
+  return getJSON(`/employees${qs}`);
 }
 
 export function fetchEmployee(id) {
@@ -37,6 +33,6 @@ export function fetchSalary(id) {
   return getJSON(`/employees/${id}/salary`);
 }
 
-export function predictSalary(inputs) {
-  return postJSON('/predict-salary', inputs);
+export function predictSalary(data) {
+  return postJSON('/predict-salary', data);
 }

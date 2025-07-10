@@ -1,22 +1,23 @@
-// frontend/src/components/ui/SearchBar.jsx
+import React from 'react';
 import { useState } from 'react';
+
 
 export default function SearchBar({ onSearch }) {
   const [term, setTerm] = useState('');
-  const handleSubmit = e => {
+  const submit = e => {
     e.preventDefault();
-    onSearch(term.trim());
+    onSearch(term);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={submit} style={{ marginTop: '1rem' }}>
       <input
-        type="text"
         value={term}
         onChange={e => setTerm(e.target.value)}
-        placeholder="Search by name/role/location"
+        placeholder="Search…"
+        style={{ padding: '0.5rem', width: '200px' }}
       />
-      <button type="submit">Search</button>
+      <button type="submit" style={{ marginLeft: '0.5rem' }}>Go</button>
     </form>
   );
 }

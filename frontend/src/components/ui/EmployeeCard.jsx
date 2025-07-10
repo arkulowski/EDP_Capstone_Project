@@ -1,4 +1,4 @@
-// frontend/src/components/ui/EmployeeList.jsx
+import React from 'react';
 import EmployeeCard from './EmployeeCard';
 
 export default function EmployeeList({ list }) {

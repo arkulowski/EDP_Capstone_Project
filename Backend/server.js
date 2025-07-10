@@ -71,9 +71,7 @@ app.get('/api/employees/:id', async (req, res) => {
 // Route: /api/search
 app.get('/api/search', async (req, res) =>{
   const { fQuery, lQuery } = req.query
-  const query = [
-   
-  ] 
+  const query = [] 
 
   if (fQuery){
     query.push({firstname: { $regex: `^${fQuery}`, $options: 'i' }})

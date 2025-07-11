@@ -1,0 +1,14 @@
+.input-row {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .input-row input {
+    flex: 1; /* each input takes equal space */
+    padding: 10px;
+    font-size: 1rem;
+  }
+  

@@ -1,68 +1,115 @@
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from "react";
+import DisplayCard from "../components/DisplayCard";
+import "./lookup.css";
 
-export default function EmployeeLookup() {
-  const [employees,  setEmployees]  = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [loading,    setLoading]    = useState(false);
-  const [error,      setError]      = useState(null);
+// Utility to debounce individual query inputs
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
 
-  // 1) Load all on mount
   useEffect(() => {
-    setLoading(true);
-    fetch('/api/employees')
-      .then(r => r.ok ? r.json() : Promise.reject(r.statusText))
-      .then(data => setEmployees(data))
-      .catch(err => setError(err))
-      .finally(() => setLoading(false));
-  }, []);
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
 
-  // 2) Search handler
-  const handleSearch = e => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
 
-    const url = searchTerm
-      ? `/api/search?q=${encodeURIComponent(searchTerm)}`
-      : '/api/employees';
+  return debouncedValue;
+}
 
-    fetch(url)
-      .then(r => r.ok ? r.json() : Promise.reject(r.statusText))
-      .then(data => setEmployees(data))
-      .catch(err => setError(err))
-      .finally(() => setLoading(false));
-  };
+const EmployeeLookUp = () => {
+  const [firstNameQuery, setFirstNameQuery] = useState('');
+  const [lastNameQuery, setLastNameQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Debounce each query separately
+  const debouncedFirstName = useDebounce(firstNameQuery, 500);
+  const debouncedLastName = useDebounce(lastNameQuery, 500);
+
+  // Fetch results from the backend when either query changes
+  useEffect(() => {
+    if (!debouncedFirstName && !debouncedLastName) {
+      setResults([]);  // Clear results if both queries are empty
+      return;
+    }
+
+    const fetchResults = async () => {
+        setLoading(true);
+        try {
+          const employeeId = localStorage.getItem('employeeId');
+      
+          const response = await fetch(
+            `${import.meta.env.VITE_SOCKS_API_URL}/search?fQuery=${debouncedFirstName}&lQuery=${debouncedLastName}`,
+            {
+              method: 'GET',
+              headers: employeeId
+                ? { 'x-employee-id': employeeId }
+                : undefined,
+            }
+          );
+      
+          const data = await response.json();
+          console.log(data); // Log the response for debugging
+          setResults(data);
+        } catch (error) {
+          console.error('Error fetching search results:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+    fetchResults();
+  }, [debouncedFirstName, debouncedLastName]);
 
   return (
-    <>
-      <h2>Employee Directory</h2>
-
-      <form onSubmit={handleSearch} className="search-bar">
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          placeholder="Search by first or last name…"
+    <div>
+        <div className="input-row">
+                <input
+                type="text"
+                value={firstNameQuery}
+                onChange={(e) => setFirstNameQuery(e.target.value)}
+                placeholder="Search by First Name"
+                defaultValue="A"
+            />
+            <input
+                type="text"
+                value={lastNameQuery}
+                onChange={(e) => setLastNameQuery(e.target.value)}
+                placeholder="Search by Last Name"
+                style={{ marginLeft: "20px" }}
+            />
+        </div>
+      
+      
+      {/* Loading and results */}
+      {loading && <p>Loading...</p>}
+      <div className="card-container">
+        {results.length === 0 && !loading && <div></div>}
+        {results.map((item) => (
+          <DisplayCard
+            key={item.employee_id}
+            employee_id={item.employee_id}
+            manager_id={item.manager_id}
+            firstname={item.firstname}
+            lastname={item.lastname}
+            phone_number={item.phone_number}
+            Age={item.Age}
+            Gender={item.Gender}
+            Country={item.Country}
+            Race={item.Race}
+            Job_Title={item.Job_Title}
+            Senior={item.Senior}
+            Education_Level={item.Education_Level}
+            Years_of_Experience={item.Years_of_Experience}
+            Salary={item?.Salary}
         />
-        <button type="submit">Go</button>
-      </form>
-
-      {loading && <p>Loading…</p>}
-      {error   && <p style={{ color: 'red' }}>Error: {error}</p>}
-      {!loading && employees.length === 0 && <p>No results</p>}
-
-      <ul className="employee-list">
-        {employees.map(emp => (
-          <li className="employee-card" key={emp.employee_id}>
-            <div className="employee-name">
-              {emp.firstname} {emp.lastname}
-            </div>
-            <div className="employee-meta">
-              {emp.job_title || '–'} • {emp.department || '–'}
-            </div>
-          </li>
         ))}
-      </ul>
-    </>
+      </div>
+    </div>
   );
-}
+};
+
+export default EmployeeLookUp;

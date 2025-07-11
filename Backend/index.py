@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request, make_response, Response
 from flask_cors import CORS
 import pandas as pd
 import json
@@ -10,7 +10,6 @@ with open("../models/lin_reg_model.pkl", "rb") as f:
 app = Flask(__name__)
 # Specify the allowed origin
 CORS(app)
-from flask import Response
 
 @app.before_request
 def basic_authentication():

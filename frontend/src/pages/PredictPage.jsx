@@ -3,6 +3,7 @@ import React, { useState } from "react";
 const PredictPage = () => {
 
   const [salaryData, setSalaryData] = useState({
+    job_title:null,
     education_level: 0,
     years_of_experience: 0,
     country: "us"
@@ -61,7 +62,9 @@ const PredictPage = () => {
                 type="text"
                 className="form-control"
                 id="jobTitle"
-                name="jobTitle"
+                name="job_title"
+                value={salaryData.job_title}
+                onChange={handleChange}
               />
             </div>
             {/* Education Level */}

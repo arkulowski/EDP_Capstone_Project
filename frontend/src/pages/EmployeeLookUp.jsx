@@ -1,86 +1,68 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useParams, Link } from "react-router-dom";
+import { useEffect, useState } from 'react';
 
-// Utility to debounce individual query inputs
-function useDebounce(value, delay) {
-  const [debouncedValue, setDebouncedValue] = useState(value);
+export default function EmployeeLookup() {
+  const [employees,  setEmployees]  = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading,    setLoading]    = useState(false);
+  const [error,      setError]      = useState(null);
 
+  // 1) Load all on mount
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
+    setLoading(true);
+    fetch('/api/employees')
+      .then(r => r.ok ? r.json() : Promise.reject(r.statusText))
+      .then(data => setEmployees(data))
+      .catch(err => setError(err))
+      .finally(() => setLoading(false));
+  }, []);
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
+  // 2) Search handler
+  const handleSearch = e => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-  return debouncedValue;
-}
+    const url = searchTerm
+      ? `/api/search?q=${encodeURIComponent(searchTerm)}`
+      : '/api/employees';
 
-const EmployeeLookUp = () => {
-  const [firstNameQuery, setFirstNameQuery] = useState('');
-  const [lastNameQuery, setLastNameQuery] = useState('');
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  // Debounce each query separately
-  const debouncedFirstName = useDebounce(firstNameQuery, 500);
-  const debouncedLastName = useDebounce(lastNameQuery, 500);
-
-  // Fetch results from the backend when either query changes
-  useEffect(() => {
-    if (!debouncedFirstName && !debouncedLastName) {
-      setResults([]);  // Clear results if both queries are empty
-      return;
-    }
-
-    const fetchResults = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_SOCKS_API_URL}/search?fQuery=${debouncedFirstName}&lQuery=${debouncedLastName}`,
-          { method: "GET" }
-        );
-        const data = await response.json();
-        console.log(data);  // Log the response for debugging
-        setResults(data);
-      } catch (error) {
-        console.error('Error fetching search results:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchResults();
-  }, [debouncedFirstName, debouncedLastName]);
+    fetch(url)
+      .then(r => r.ok ? r.json() : Promise.reject(r.statusText))
+      .then(data => setEmployees(data))
+      .catch(err => setError(err))
+      .finally(() => setLoading(false));
+  };
 
   return (
-    <div>
-      <input
-        type="text"
-        value={firstNameQuery}
-        onChange={(e) => setFirstNameQuery(e.target.value)}
-        placeholder="Search by First Name"
-      />
-      <input
-        type="text"
-        value={lastNameQuery}
-        onChange={(e) => setLastNameQuery(e.target.value)}
-        placeholder="Search by Last Name"
-      />
-      
-      {/* Loading and results */}
-      {loading && <p>Loading...</p>}
-      <ul>
-        {results.length === 0 && !loading && <li>No results found</li>}
-        {results.map((item) => (
-          <li key={item.employee_id}>{item.firstname} {item.lastname}</li>
+    <>
+      <h2>Employee Directory</h2>
+
+      <form onSubmit={handleSearch} className="search-bar">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+          placeholder="Search by first or last name…"
+        />
+        <button type="submit">Go</button>
+      </form>
+
+      {loading && <p>Loading…</p>}
+      {error   && <p style={{ color: 'red' }}>Error: {error}</p>}
+      {!loading && employees.length === 0 && <p>No results</p>}
+
+      <ul className="employee-list">
+        {employees.map(emp => (
+          <li className="employee-card" key={emp.employee_id}>
+            <div className="employee-name">
+              {emp.firstname} {emp.lastname}
+            </div>
+            <div className="employee-meta">
+              {emp.job_title || '–'} • {emp.department || '–'}
+            </div>
+          </li>
         ))}
       </ul>
-    </div>
+    </>
   );
-};
-
-export default EmployeeLookUp;
+}

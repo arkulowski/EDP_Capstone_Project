@@ -1,0 +1,82 @@
+import React, { useState, useEffect } from 'react';
+
+// Utility to debounce the input
+function useDebounce(values, delay) {
+  const [debouncedValues, setDebouncedValues] = useState(values);
+
+  useEffect(() => {
+    const handlers = Object.keys(values).map((key) => {
+      return setTimeout(() => {
+        setDebouncedValues((prev) => ({ ...prev, [key]: values[key] }));
+      }, delay);
+    });
+
+    return () => handlers.forEach(clearTimeout);  // Cleanup all timeouts
+  }, [values, delay]);
+
+  return debouncedValues;
+}
+
+const DynamicSearch = () => {
+  const [nameQuery, setNameQuery] = useState('');
+  const [locationQuery, setLocationQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Use debounce hook to debounce both queries
+  const { name: debouncedName, location: debouncedLocation } = useDebounce(
+    { name: nameQuery, location: locationQuery },
+    500
+  );
+
+  // Fetch results from the backend when either query changes
+  useEffect(() => {
+    if (!debouncedName && !debouncedLocation) {
+      setResults([]);  // Clear results if both queries are empty
+      return;
+    }
+
+    const fetchResults = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `/api/search?name=${debouncedName}&location=${debouncedLocation}`
+        );
+        const data = await response.json();
+        setResults(data);
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResults();
+  }, [debouncedName, debouncedLocation]);
+
+  return (
+    <div>
+      <input
+        type="text"
+        value={nameQuery}
+        onChange={(e) => setNameQuery(e.target.value)}
+        placeholder="Search by name"
+      />
+      <input
+        type="text"
+        value={locationQuery}
+        onChange={(e) => setLocationQuery(e.target.value)}
+        placeholder="Search by location"
+      />
+      {loading && <p>Loading...</p>}
+      <ul>
+        {results.length === 0 && !loading && <li>No results found</li>}
+        {results.map((item) => (
+          <li key={item.id}>{item.name} - {item.location}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default DynamicSearch;

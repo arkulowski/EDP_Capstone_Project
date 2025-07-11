@@ -73,9 +73,7 @@ app.get('/api/search', async (req, res) =>{
   const { fQuery, lQuery } = req.query
   const requestingEmployeeId = req.headers['x-employee-id'];
   
-  if (!requestingEmployeeId) {
-    return res.status(400).json({ message: 'Missing Employee ID' });
-  }
+  
 
   const query = []
   if (fQuery){ query.push({firstname: { $regex: `^${fQuery}`, $options: 'i' }}) }
@@ -115,6 +113,21 @@ app.get('/api/search', async (req, res) =>{
     res.status(500).json({ message: 'Error searching employees' });
   }
 })
+
+// Route: /api/managment
+app.get('/api/managment', async (req, res) => {
+  const id = req.headers['x-employee-id'];
+  try {
+    // Logic to fetch a specific employee by id
+    const employeeCollection = db.collection('Employees');
+    const employees = await employeeCollection.find({manager_id : parseInt(id)}).toArray();
+
+    res.json(employees);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: `Error fetching character with ID: ${id}` });
+  }
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

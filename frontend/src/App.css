@@ -1,42 +1,59 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* App.css */
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
+.sidebar {
+  height: 100vh;
+  width: 5rem; /* 20 */
+  background-color: #020617; /* slate-950 */
+  padding: 1rem; /* 4 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem; /* 2 */
+  position: fixed;
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  margin-bottom: 1rem; /* mb-4 */
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.content {
+  flex: 1;
+  padding: 1rem; /* p-4 */
+  margin-left: 125px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.nav-button {
+  padding: 0.75rem; /* p-3 */
+  font-size: 1.25rem; /* text-xl */
+  background-color: #1e293b; /* slate-800 */
+  border-radius: 0.375rem; /* rounded-md */
+  transition: background-color 0.3s;
+  position: relative;
+  overflow: hidden;
+  color: inherit;
+  border: none;
+  cursor: pointer;
 }
 
-.card {
-  padding: 2em;
+.nav-button:hover {
+  background-color: #334155; /* slate-700 */
 }
 
-.read-the-docs {
-  color: #888;
+.nav-icon {
+  position: relative;
+  z-index: 10;
+}
+
+.nav-highlight {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.375rem;
+  background-color: #4f46e5; /* indigo-600 */
+  z-index: 0;
 }

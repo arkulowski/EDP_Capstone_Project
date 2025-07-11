@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useParams, Link } from "react-router-dom";
+import DisplayCard from "../components/DisplayCard";
+import "./lookup.css";
 
 // Utility to debounce individual query inputs
 function useDebounce(value, delay) {
@@ -37,48 +37,77 @@ const EmployeeLookUp = () => {
     }
 
     const fetchResults = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_SOCKS_API_URL}/search?fQuery=${debouncedFirstName}&lQuery=${debouncedLastName}`,
-          { method: "GET" }
-        );
-        const data = await response.json();
-        console.log(data);  // Log the response for debugging
-        setResults(data);
-      } catch (error) {
-        console.error('Error fetching search results:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+        setLoading(true);
+        try {
+          const employeeId = localStorage.getItem('employeeId');
+      
+          const response = await fetch(
+            `${import.meta.env.VITE_SOCKS_API_URL}/search?fQuery=${debouncedFirstName}&lQuery=${debouncedLastName}`,
+            {
+              method: 'GET',
+              headers: employeeId
+                ? { 'x-employee-id': employeeId }
+                : undefined,
+            }
+          );
+      
+          const data = await response.json();
+          console.log(data); // Log the response for debugging
+          setResults(data);
+        } catch (error) {
+          console.error('Error fetching search results:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
     fetchResults();
   }, [debouncedFirstName, debouncedLastName]);
 
   return (
     <div>
-      <input
-        type="text"
-        value={firstNameQuery}
-        onChange={(e) => setFirstNameQuery(e.target.value)}
-        placeholder="Search by First Name"
-      />
-      <input
-        type="text"
-        value={lastNameQuery}
-        onChange={(e) => setLastNameQuery(e.target.value)}
-        placeholder="Search by Last Name"
-      />
+        <div className="input-row">
+                <input
+                type="text"
+                value={firstNameQuery}
+                onChange={(e) => setFirstNameQuery(e.target.value)}
+                placeholder="Search by First Name"
+                defaultValue="A"
+            />
+            <input
+                type="text"
+                value={lastNameQuery}
+                onChange={(e) => setLastNameQuery(e.target.value)}
+                placeholder="Search by Last Name"
+                style={{ marginLeft: "20px" }}
+            />
+        </div>
+      
       
       {/* Loading and results */}
       {loading && <p>Loading...</p>}
-      <ul>
-        {results.length === 0 && !loading && <li>No results found</li>}
+      <div className="card-container">
+        {results.length === 0 && !loading && <div></div>}
         {results.map((item) => (
-          <li key={item.employee_id}>{item.firstname} {item.lastname}</li>
+          <DisplayCard
+            key={item.employee_id}
+            employee_id={item.employee_id}
+            manager_id={item.manager_id}
+            firstname={item.firstname}
+            lastname={item.lastname}
+            phone_number={item.phone_number}
+            Age={item.Age}
+            Gender={item.Gender}
+            Country={item.Country}
+            Race={item.Race}
+            Job_Title={item.Job_Title}
+            Senior={item.Senior}
+            Education_Level={item.Education_Level}
+            Years_of_Experience={item.Years_of_Experience}
+            Salary={item?.Salary}
+        />
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

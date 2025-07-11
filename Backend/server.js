@@ -11,7 +11,7 @@ const dbName = process.env.MONGO_DB;
 
 const app = express();
 app.use(cors());
-const PORT = 3000;
+const PORT = process.env.PORT;
 app.use(express.json());
 
 // MongoDB client setup

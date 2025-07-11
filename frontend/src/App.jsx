@@ -16,7 +16,6 @@ export default function App() {
           <Route path="/"               element={<EmployeeLookUp />} />
           <Route path="/employees/:id"  element={<EmployeePage />} />
           <Route path="/predict"        element={<PredictPage />} />
-          <Route path="/search"        element={<EmployeeLookUp />} />
         </Routes>
       </main>
     </BrowserRouter>

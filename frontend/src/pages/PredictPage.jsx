@@ -1,88 +1,82 @@
-
-import React, { useState } from 'react';
-import { predictSalary }   from '../api';
+import { useState } from 'react';
 
 export default function PredictPage() {
-  const [inputs, setInputs] = useState({
-    educationLevel: '',
-    yearsOfExperience: '',
-    country: ''
-  });
-  const [result, setResult] = useState(null);
-  const [error, setError]   = useState('');
+  const [form,    setForm]    = useState({ education: '', experience: '', country: '' });
+  const [result,  setResult]  = useState(null);
+  const [error,   setError]   = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = e => {
+    setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setError('');
+    setLoading(true);
+    setError(null);
     setResult(null);
 
- 
-    const payload = {
-      educationLevel: Number(inputs.educationLevel),
-      yearsOfExperience: Number(inputs.yearsOfExperience),
-      country: inputs.country.trim()
-    };
-
     try {
-      const { predictedSalary } = await predictSalary(payload);
-      setResult(predictedSalary);
+      const res = await fetch('/api/predict', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          education_level:  Number(form.education),
+          years_experience: Number(form.experience),
+          country:          form.country.trim(),
+        }),
+      });
+      if (!res.ok) throw new Error(`Status ${res.status}`);
+      const data = await res.json();
+      setResult(data.predicted_salary);
     } catch (err) {
-      console.error(err);
-      setError('Prediction failed. Please check your inputs.');
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setInputs(prev => ({ ...prev, [name]: value }));
-  };
-
   return (
-    <div style={{ padding: '1rem' }}>
-      <h1>Predict Salary</h1>
-      <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '0.5rem', maxWidth: '300px' }}>
+    <>
+      <h2>Predict Salary</h2>
+
+      <form onSubmit={handleSubmit} className="predict-form">
         <label>
           Education Level
           <input
-            name="educationLevel"
+            name="education"
             type="number"
-            min="0"
-            value={inputs.educationLevel}
+            value={form.education}
             onChange={handleChange}
-            placeholder="e.g. 1, 2, 3…"
+            required
           />
         </label>
         <label>
-          Years of Experience
+          Years Experience
           <input
-            name="yearsOfExperience"
+            name="experience"
             type="number"
-            min="0"
-            value={inputs.yearsOfExperience}
+            value={form.experience}
             onChange={handleChange}
-            placeholder="e.g. 5"
+            required
           />
         </label>
         <label>
           Country
           <input
             name="country"
-            type="text"
-            value={inputs.country}
+            value={form.country}
             onChange={handleChange}
-            placeholder="e.g. USA"
+            required
           />
         </label>
-        <button type="submit">Predict</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Predicting…' : 'Predict'}
+        </button>
       </form>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
-      {result != null && (
-        <p style={{ marginTop: '1rem' }}>
-          <strong>Estimated Salary:</strong> ${Number(result).toLocaleString()}
-        </p>
-      )}
-    </div>
+      {error  && <p style={{ color: 'red' }}>Error: {error}</p>}
+      {result != null && <p>Predicted salary: ${result.toLocaleString()}</p>}
+    </>
   );
 }

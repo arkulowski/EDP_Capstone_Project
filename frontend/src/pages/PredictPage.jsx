@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-//import { useAuth } from '../hooks/AuthContext';
 
 const PredictPage = () => {
-  //const { user } = useAuth();
 
   const [salaryData, setSalaryData] = useState({
     education_level: 0,

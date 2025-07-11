@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import HomePage     from './pages/HomePage';
 import EmployeePage from './pages/EmployeePage';
 import PredictPage  from './pages/PredictPage';
+import EmployeeLookUp from './pages/EmployeeLookUp';
 
 export default function App() {
   return (
@@ -12,9 +13,9 @@ export default function App() {
       </header>
       <main style={{ padding: '1rem' }}>
         <Routes>
-          <Route path="/"              element={<HomePage />} />
-          <Route path="/employees/:id" element={<EmployeePage />} />
-          <Route path="/predict"       element={<PredictPage />} />
+          <Route path="/"               element={<EmployeeLookUp />} />
+          <Route path="/employees/:id"  element={<EmployeePage />} />
+          <Route path="/predict"        element={<PredictPage />} />
         </Routes>
       </main>
     </BrowserRouter>

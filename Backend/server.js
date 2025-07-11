@@ -71,23 +71,44 @@ app.get('/api/employees/:id', async (req, res) => {
 // Route: /api/search
 app.get('/api/search', async (req, res) =>{
   const { fQuery, lQuery } = req.query
-  const query = [] 
-
-  if (fQuery){
-    query.push({firstname: { $regex: `^${fQuery}`, $options: 'i' }})
+  const requestingEmployeeId = req.headers['x-employee-id'];
+  
+  if (!requestingEmployeeId) {
+    return res.status(400).json({ message: 'Missing Employee ID' });
   }
 
-  if (lQuery) {
-    query.push({lastname: { $regex: `^${lQuery}`, $options: 'i' }})
-  }
+  const query = []
+  if (fQuery){ query.push({firstname: { $regex: `^${fQuery}`, $options: 'i' }}) }
+  if (lQuery) { query.push({lastname: { $regex: `^${lQuery}`, $options: 'i' }}) }
 
   try {
     // Logic to return searched values
     const employeeCollection = db.collection('Employees');
-    const employee = await employeeCollection.find({
-      $and: query
-    }).toArray();
-    res.json(employee);
+    const employee = await employeeCollection.find({ $and: query }).toArray();
+    
+    const filtered = employee.map(emp => {
+      const isSelf = emp.employee_id === parseInt(requestingEmployeeId);
+      const isManager = emp.manager_id === parseInt(requestingEmployeeId);
+
+      return {
+        employee_id: emp.employee_id,
+        manager_id: emp.manager_id,
+        firstname: emp.firstname,
+        lastname: emp.lastname,
+        phone_number: emp.phone_number,
+        Age: emp.Age,
+        Gender: emp.Gender,
+        Country: emp.Country,
+        Race: emp.Race,
+        Job_Title: emp['Job Title'], // if the DB uses this format
+        Senior: emp.Senior,
+        Education_Level: emp['Education Level'],
+        Years_of_Experience: emp['Years of Experience'],
+        ...(isSelf || isManager ? { Salary: emp.Salary } : {}) // Only include salary if it's the same person
+      };
+    });
+
+    res.json(filtered);
     
   } catch (error) {
     console.log(error)

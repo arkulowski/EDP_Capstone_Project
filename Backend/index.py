@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request, make_response, Response
 from flask_cors import CORS
 import pandas as pd
 import json
@@ -10,7 +10,6 @@ with open("../models/lin_reg_model.pkl", "rb") as f:
 app = Flask(__name__)
 # Specify the allowed origin
 CORS(app)
-from flask import Response
 
 @app.before_request
 def basic_authentication():
@@ -25,15 +24,6 @@ def index():
 def get_test():
     return jsonify({"response": "good"})
 
-"""
-@app.route('/estimate_salary', methods=['OPTIONS'])
-def options():
-    response = make_response()
-    response.headers['Access-Control-Allow-Origin']='*'
-    response.headers['Access-Control-Allow-Methods']='POST'
-    return response
-"""
-
 
 @app.route('/estimate_salary', methods=['POST'])
 def estimate_salary():
@@ -43,7 +33,7 @@ def estimate_salary():
     df = pd.DataFrame(features_input, index=[0])
 
     output = loaded_model.predict(df)[0]
-    response = jsonify({ "data": {"estimated_salary": output}})
+    response = jsonify({"estimated_salary": output})
     print(response)
     # Set the specific origin in the response headers
     return response

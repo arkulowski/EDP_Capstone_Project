@@ -10,8 +10,6 @@ const PredictPage = () => {
     country: "us"
   });
 
-  const [estimatedSalary, setEstimatedSalary] = useState(0.00)
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setSalaryData({
@@ -39,12 +37,7 @@ const PredictPage = () => {
       }
 
       const data = await response.json();
-      console.log(data)
-      let roundedNumString = data['estimated_salary'].toFixed(2);
-      let roundedNum = parseFloat(roundedNumString);
-      setEstimatedSalary(roundedNum);
-
-
+      console.log(data);
       // Handle post submission logic (like showing a success message)
     } catch (error) {
       console.error("Error posting data", error);
@@ -55,10 +48,19 @@ const PredictPage = () => {
   return (
     <div className="row">
       <div>
-        <h5>Salary Estimator</h5>
+        <h5>Welcome, PLACEHOLDER! Your UID is PLACEHOLDER</h5> : <h1>Please log in.</h1>
       </div>
       <div className="col-4">
         <form onSubmit={handleSubmit} className="p-3">
+          <div className="form-group">
+            <label htmlFor="userId">User ID</label>
+            <input
+              type="text"
+              className="form-control"
+              id="userId"
+              name="userId"
+            />
+          </div>
           <div className="form-group">
             <label htmlFor="jobTitle">Job Title</label>
             <input
@@ -78,34 +80,24 @@ const PredictPage = () => {
               value={salaryData.education_level}
               onChange={handleChange}
             >
-              <option value="0">High School</option>
-              <option value="1">Undergraduate</option>
-              <option value="2">Postgraduate</option>
-              <option value="3">PhD</option>
+              <option>0</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
             </select>
           </div>
-
           {/* Years of expereience */}
           <div className="form-group">
-            <label htmlFor="yearsOfExperience">Years of Experience</label>
+            <label htmlFor="yearsOfExpereience">Years of Experience</label>
             <input
-              type="number"
+              type="text"
               className="form-control"
               id="yearsOfExperience"
               name="years_of_experience"
               value={salaryData.years_of_experience}
               onChange={handleChange}
-              min="0"
-              step="1"
-              onKeyDown={(e) => {
-                // Prevent decimal point
-                if (e.key === '.') {
-                  e.preventDefault();
-                }
-              }}
             />
           </div>
-
           {/* Country */}
           <div className="form-group">
             <label htmlFor="country">Country</label>
@@ -127,7 +119,6 @@ const PredictPage = () => {
             Submit
           </button>
         </form>
-        <p>Estimated Salary: ${estimatedSalary}</p>
       </div>
     </div>
   );

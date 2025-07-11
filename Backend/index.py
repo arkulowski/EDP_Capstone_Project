@@ -4,7 +4,7 @@ import pandas as pd
 import json
 import pickle
 
-with open("../models/lin_reg_model.pkl", "rb") as f:
+with open("../models/rfr_model.pkl", "rb") as f:
     loaded_model = pickle.load(f)
 
 app = Flask(__name__)

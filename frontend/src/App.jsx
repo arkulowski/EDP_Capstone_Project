@@ -1,23 +1,28 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import HomePage     from './pages/HomePage';
-import EmployeePage from './pages/EmployeePage';
-import PredictPage  from './pages/PredictPage';
-import EmployeeLookUp from './pages/EmployeeLookUp';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import HomePage         from './pages/HomePage';
+import EmployeeLookup   from './pages/EmployeeLookup';
+import PredictPage      from './pages/PredictPage';
+import './index.css';
+import './App.css';
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <header style={{ padding: '0.5rem', borderBottom: '1px solid #ccc' }}>
-        <Link to="/">Home</Link> | <Link to="/predict">Predict Salary</Link>
+    <Router>
+      <header>
+        <nav className="container">
+          <NavLink to="/"        end className={({isActive})=> isActive?'active':''}>Home</NavLink>
+          <NavLink to="/employees" className={({isActive})=> isActive?'active':''}>Directory</NavLink>
+          <NavLink to="/predict"   className={({isActive})=> isActive?'active':''}>Predict Salary</NavLink>
+        </nav>
       </header>
-      <main style={{ padding: '1rem' }}>
+
+      <main className="container">
         <Routes>
-          <Route path="/"               element={<EmployeeLookUp />} />
-          <Route path="/employees/:id"  element={<EmployeePage />} />
-          <Route path="/predict"        element={<PredictPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/employees" element={<EmployeeLookup />} />
+          <Route path="/predict" element={<PredictPage />} />
         </Routes>
       </main>
-    </BrowserRouter>
+    </Router>
   );
 }

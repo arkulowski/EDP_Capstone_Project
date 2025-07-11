@@ -72,10 +72,8 @@ app.get('/api/employees/:id', async (req, res) => {
 app.get('/api/search', async (req, res) =>{
   const { fQuery, lQuery } = req.query
   const requestingEmployeeId = req.headers['x-employee-id'];
-  
-  if (!requestingEmployeeId) {
-    return res.status(400).json({ message: 'Missing Employee ID' });
-  }
+
+
 
   const query = []
   if (fQuery){ query.push({firstname: { $regex: `^${fQuery}`, $options: 'i' }}) }

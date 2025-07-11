@@ -3,10 +3,9 @@ import pickle
 from flask import Flask, jsonify, request
 import pandas as pd
 
-lin_reg_model = None
-model_path = "../models/lin_reg_model.pkl"
-with open(model_path, "rb") as f:
-    lin_reg_model = pickle.load(f)
+
+with open("../models/lin_reg_model.pkl", "rb") as f:
+    loaded_model = pickle.load(f)
 
 app = Flask(__name__)
 
@@ -22,9 +21,9 @@ def estimate_salary():
     features_input["education_level"]=int(features_input["education_level"])
     df = pd.DataFrame(features_input, index=[0])
 
-    output = lin_reg_model.predict(df)[0]
+    output = loaded_model.predict(df)[0]
     return jsonify({"estimated_salary":output})
     #return jsonify(features)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True)

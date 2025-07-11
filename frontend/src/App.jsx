@@ -13,7 +13,7 @@ import {
   SiCss3,
 } from "react-icons/si";
 
-import './App.css'; // Import regular CSS
+import './App.css';
 import Managment from './pages/Managment';
 import Login from './pages/Login';
 

@@ -73,8 +73,6 @@ app.get('/api/search', async (req, res) =>{
   const { fQuery, lQuery } = req.query
   const requestingEmployeeId = req.headers['x-employee-id'];
   
-  
-
   const query = []
   if (fQuery){ query.push({firstname: { $regex: `^${fQuery}`, $options: 'i' }}) }
   if (lQuery) { query.push({lastname: { $regex: `^${lQuery}`, $options: 'i' }}) }

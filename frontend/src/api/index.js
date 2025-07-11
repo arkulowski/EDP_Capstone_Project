@@ -32,7 +32,3 @@ export function fetchEmployee(id) {
 export function fetchSalary(id) {
   return getJSON(`/employees/${id}/salary`);
 }
-
-export function predictSalary(data) {
-  return postJSON('/predict-salary', data);
-}

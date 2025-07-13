@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-//import { useAuth } from '../hooks/AuthContext';
 
 const PredictPage = () => {
-  //const { user } = useAuth();
 
   const [salaryData, setSalaryData] = useState({
+    job_title:null,
     education_level: 0,
     years_of_experience: 0,
     country: "us"
@@ -25,7 +24,6 @@ const PredictPage = () => {
     const submission = salaryData
 
     try {
-      // TODO: Make a POST request to the API to add the sock
       const response = await fetch('http://localhost:5000/estimate_salary', {
         method: "POST",
         headers: {
@@ -54,83 +52,88 @@ const PredictPage = () => {
 
   return (
     <div className="row">
-      <div>
+      <div className="salary-estimator">
         <h5>Salary Estimator</h5>
-      </div>
-      <div className="col-4">
-        <form onSubmit={handleSubmit} className="p-3">
-          <div className="form-group">
-            <label htmlFor="jobTitle">Job Title</label>
-            <input
-              type="text"
-              className="form-control"
-              id="jobTitle"
-              name="jobTitle"
-            />
-          </div>
-          {/* Education Level */}
-          <div className="form-group">
-            <label htmlFor="educationLevel">Education Level</label>
-            <select
-              className="form-control"
-              id="educationLevel"
-              name="education_level"
-              value={salaryData.education_level}
-              onChange={handleChange}
-            >
-              <option value="0">High School</option>
-              <option value="1">Undergraduate</option>
-              <option value="2">Postgraduate</option>
-              <option value="3">PhD</option>
-            </select>
-          </div>
+        <div className="col-4">
+          <form onSubmit={handleSubmit} className="p-3">
+            <div className="form-group">
+              <label htmlFor="jobTitle">Job Title</label>
+              <input
+                type="text"
+                className="form-control"
+                id="jobTitle"
+                name="job_title"
+                value={salaryData.job_title}
+                onChange={handleChange}
+              />
+            </div>
+            {/* Education Level */}
+            <div className="form-group">
+              <label htmlFor="educationLevel">Education Level</label>
+              <select
+                className="form-control"
+                id="educationLevel"
+                name="education_level"
+                value={salaryData.education_level}
+                onChange={handleChange}
+              >
+                <option value="0">High School</option>
+                <option value="1">Undergraduate</option>
+                <option value="2">Postgraduate</option>
+                <option value="3">PhD</option>
+              </select>
+            </div>
 
-          {/* Years of expereience */}
-          <div className="form-group">
-            <label htmlFor="yearsOfExperience">Years of Experience</label>
-            <input
-              type="number"
-              className="form-control"
-              id="yearsOfExperience"
-              name="years_of_experience"
-              value={salaryData.years_of_experience}
-              onChange={handleChange}
-              min="0"
-              step="1"
-              onKeyDown={(e) => {
-                // Prevent decimal point
-                if (e.key === '.') {
-                  e.preventDefault();
-                }
-              }}
-            />
-          </div>
+            {/* Years of expereience */}
+            <div className="form-group">
+              <label htmlFor="yearsOfExperience">Years of Experience</label>
+              <input
+                type="number"
+                className="form-control"
+                id="yearsOfExperience"
+                name="years_of_experience"
+                value={salaryData.years_of_experience}
+                onChange={handleChange}
+                min="0"
+                step="1"
+                onKeyDown={(e) => {
+                  // Prevent decimal point
+                  if (e.key === '.') {
+                    e.preventDefault();
+                  }
+                }}
+              />
+            </div>
 
-          {/* Country */}
-          <div className="form-group">
-            <label htmlFor="country">Country</label>
-            <select
-              className="form-control"
-              id="country"
-              name="country"
-              value={salaryData.country}
-              onChange={handleChange}
-            >
-              <option>us</option>
-              <option>ca</option>
-              <option>uk</option>
-              <option>au</option>
-              <option>cn</option>
-            </select>
+            {/* Country */}
+            <div className="form-group">
+              <label htmlFor="country">Country</label>
+              <select
+                className="form-control"
+                id="country"
+                name="country"
+                value={salaryData.country}
+                onChange={handleChange}
+              >
+                <option>us</option>
+                <option>ca</option>
+                <option>uk</option>
+                <option>au</option>
+                <option>cn</option>
+              </select>
+            </div>
+            <button type="submit" className="btn btn-primary">
+              Submit
+            </button>
+          </form>
+          <div className="estimated-salary">
+            Estimated Salary: <span>${estimatedSalary}</span>
           </div>
-          <button type="submit" className="btn btn-primary">
-            Submit
-          </button>
-        </form>
-        <p>Estimated Salary: ${estimatedSalary}</p>
+        </div>
       </div>
     </div>
   );
+
 };
 
 export default PredictPage;

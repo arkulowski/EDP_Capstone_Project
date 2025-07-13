@@ -10,7 +10,6 @@ import {
   SiTailwindcss,
   SiReact,
   SiJavascript,
-  SiCss3,
 } from "react-icons/si";
 
 import './App.css';
@@ -27,8 +26,8 @@ export default function App() {
             <Route path="/" element={<EmployeeLookUp />} />
             <Route path="/employees/:id" element={<EmployeePage />} />
             <Route path="/predict" element={<PredictPage />} />
-            <Route path='/managment' element={<Managment />} />
-            <Route path='/login' element={<Login />} />
+            <Route path="/managment" element={<Managment />} />
+            <Route path="/login" element={<Login />} />
           </Routes>
         </div>
       </div>
@@ -71,38 +70,34 @@ const SideNav = () => {
       <NavItem selected={selected === 3} id={3} setSelected={setSelected} to="/login">
         <SiFramer />
       </NavItem>
-      <NavItem selected={selected === 4} id={4} setSelected={setSelected}>
-        <SiCss3 />
-      </NavItem>
     </nav>
   );
 };
 
-const NavItem = ({ children, selected, id, setSelected, to }) => {
-  return (
-    <NavLink
-      to={to}
-      className={({ isActive }) => `nav-button ${isActive ? 'active' : ''}`}
-      onClick={() => setSelected(id)}
+const NavItem = ({ children, selected, id, setSelected, to }) => (
+  <NavLink
+    to={to}
+    className={({ isActive }) => `nav-button ${isActive ? 'active' : ''}`}
+    onClick={() => setSelected(id)}
+  >
+    <motion.div
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="nav-icon-wrapper"
     >
-      <motion.div
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="nav-icon-wrapper"
-      >
-        <span className="nav-icon">{children}</span>
-        <AnimatePresence>
-          {selected && (
-            <motion.span
-              className="nav-highlight"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-            />
-          )}
-        </AnimatePresence>
-      </motion.div>
-    </NavLink>
-  );
-};
+      <span className="nav-icon">{children}</span>
+      <AnimatePresence>
+        {selected === id && (
+          <motion.span
+            className="nav-highlight"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+          />
+        )}
+      </AnimatePresence>
+    </motion.div>
+  </NavLink>
+);
+
 

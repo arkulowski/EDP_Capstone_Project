@@ -1,14 +1,65 @@
+/* src/pages/lookup.css */
+
+/* Retain any existing styles… */
 .input-row {
-    display: flex;
-    gap: 20px;
-    padding: 20px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  .input-row input {
-    flex: 1; /* each input takes equal space */
-    padding: 10px;
-    font-size: 1rem;
-  }
-  
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input-row input {
+  flex: 1;
+  padding: 10px;
+  font-size: 1rem;
+}
+
+
+.not-logged-in {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 2rem);
+  padding: var(--spacing);
+  background: var(--bg);
+}
+
+.not-logged-in .card {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 420px;
+  width: 100%;
+}
+
+.not-logged-in h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: var(--fg);
+}
+
+.not-logged-in p {
+  margin-bottom: 1.5rem;
+  color: var(--fg);
+  line-height: 1.4;
+}
+
+.btn-login {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-login:hover {
+  background: var(--primary-50);
+}
+
+

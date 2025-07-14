@@ -37,53 +37,55 @@ const EmployeeLookUp = () => {
     }
 
     const fetchResults = async () => {
-        setLoading(true);
-        try {
-          const employeeId = localStorage.getItem('employeeId');
-      
-          const response = await fetch(
-            `${import.meta.env.VITE_SOCKS_API_URL}/search?fQuery=${debouncedFirstName}&lQuery=${debouncedLastName}`,
-            {
-              method: 'GET',
-              headers: employeeId
-                ? { 'x-employee-id': employeeId }
-                : undefined,
-            }
-          );
-      
-          const data = await response.json();
-          console.log(data); // Log the response for debugging
-          setResults(data);
-        } catch (error) {
-          console.error('Error fetching search results:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
+      setLoading(true);
+      try {
+        const employeeId = localStorage.getItem('employeeId');
+        const response = await fetch(
+          `${import.meta.env.VITE_SOCKS_API_URL}/search?fQuery=${debouncedFirstName}&lQuery=${debouncedLastName}`,
+          {
+            method: 'GET',
+            headers: employeeId
+              ? { 'x-employee-id': employeeId }
+              : undefined,
+          }
+        );
+        const data = await response.json();
+        console.log(data); // Log the response for debugging
+        setResults(data);
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchResults();
   }, [debouncedFirstName, debouncedLastName]);
 
   return (
     <div>
-        <div className="input-row">
-                <input
-                type="text"
-                value={firstNameQuery}
-                onChange={(e) => setFirstNameQuery(e.target.value)}
-                placeholder="Search by First Name"
-                defaultValue="A"
-            />
-            <input
-                type="text"
-                value={lastNameQuery}
-                onChange={(e) => setLastNameQuery(e.target.value)}
-                placeholder="Search by Last Name"
-                style={{ marginLeft: "20px" }}
-            />
-        </div>
-      
-      
+      {/* Added header */}
+      <h1 style={{ textAlign: "center", margin: "1rem 0" }}>
+        Welcome to the Employee Directory
+      </h1>
+
+      <div className="input-row">
+        <input
+          type="text"
+          value={firstNameQuery}
+          onChange={(e) => setFirstNameQuery(e.target.value)}
+          placeholder="Search by First Name"
+          defaultValue="A"
+        />
+        <input
+          type="text"
+          value={lastNameQuery}
+          onChange={(e) => setLastNameQuery(e.target.value)}
+          placeholder="Search by Last Name"
+          style={{ marginLeft: "20px" }}
+        />
+      </div>
+
       {/* Loading and results */}
       {loading && <p>Loading...</p>}
       <div className="card-container">
@@ -105,7 +107,7 @@ const EmployeeLookUp = () => {
             Education_Level={item.Education_Level}
             Years_of_Experience={item.Years_of_Experience}
             Salary={item?.Salary}
-        />
+          />
         ))}
       </div>
     </div>
@@ -113,3 +115,6 @@ const EmployeeLookUp = () => {
 };
 
 export default EmployeeLookUp;
+
+
+
